@@ -5,8 +5,6 @@ import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useApi } from "@/context/ApiContext";
 import RecipeEditor from "@/components/editors/RecipeEditor";
-import RecipeCard from "@/components/editors/RecipeCard";
-import NutritionCard from "@/components/editors/NutritionCard";
 
 const EditRecipePage = () => {
   const { userId, isSignedIn } = useAuth();
