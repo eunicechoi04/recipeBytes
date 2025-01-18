@@ -1,9 +1,15 @@
 import { useState } from "react";
 import RecipeCard from "@/components/viewports/RecipeCard";
 import NutritionCard from "@/components/editors/NutritionCard";
-const Tabs = ({ tab_names, components }) => {
+const Tabs = ({
+  tab_names,
+  components,
+}: {
+  tab_names: string[];
+  components: any;
+}) => {
   const [activeTab, setActiveTab] = useState(0);
-  const handleTabClick = (index) => {
+  const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
   return (
