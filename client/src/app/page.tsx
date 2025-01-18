@@ -9,8 +9,8 @@ const Homepage = () => {
       <Image
         src="/bbblurry.svg" // Path to your image in the public folder
         alt="Background"
-        layout="fill"
-        objectFit="cover"
+        fill
+        style={{ objectFit: "cover" }}
         quality={100}
         className="z-0"
       />

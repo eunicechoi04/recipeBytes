@@ -23,9 +23,8 @@ const MyRecipes = () => {
 
     const fetchRecipes = async () => {
       try {
-        const response = await api.get(`/getRecipes/${userId}`);
-        setRecipes(response.data);
-        console.log("final recipes:", recipes);
+        const response = await api?.get(`/getRecipes/${userId}`);
+        setRecipes(response?.data);
       } catch (error) {
         console.error("Error fetching recipes:", error);
       }

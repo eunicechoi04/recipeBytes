@@ -1,10 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Pencil, Settings, NotebookText } from "lucide-react";
 // import { useUser } from "@clerk/nextjs";
 
 const defaultAvatar =
   "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg";
-const ProfileCard = ({ user }) => {
+
+interface User {
+  first_name: string;
+  last_name: string;
+  username: string;
+}
+
+const ProfileCard = ({ user }: { user: User }) => {
   // const { user, isLoaded } = useUser();
 
   // if (!isLoaded) {
@@ -14,9 +22,13 @@ const ProfileCard = ({ user }) => {
   // }
   return (
     <div className="flex flex-col bg-white items-center gap-2 text-sm rounded-lg px-4 py-12 shadow-md">
-      {/* <img src={user.profileImageUrl || defaultAvatar} className="h-8 w-8 rounded-full" />
-            <div>{user.username}</div> */}
-      <img src={defaultAvatar} className="w-32 h-32 rounded-full" />
+      <Image
+        src={defaultAvatar}
+        alt="Profile Image"
+        width={128}
+        height={128}
+        className="rounded-full"
+      />
       <div className="text-lg font-semibold">
         {user.first_name} {user.last_name}
       </div>

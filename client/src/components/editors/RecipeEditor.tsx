@@ -1,23 +1,51 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Plus } from "lucide-react";
 import IngredientEditor from "./IngredientEditor";
 import DirectionEditor from "./DirectionEditor";
 
-const RecipeEditor = ({ recipeData, onRecipeChange }) => {
+interface RecipeData {
+  title: string;
+  tagged_ingredients: Array<{
+    quantity: number;
+    range_end: number;
+    unit: string;
+    name: string;
+    comment: string;
+  }>;
+  instructions: string[];
+}
+
+interface RecipeEditorProps {
+  recipeData: RecipeData;
+  onRecipeChange: (updatedRecipe: RecipeData) => void;
+}
+
+const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
   const [title, setTitle] = useState(recipeData.title);
   const [ingredients, setIngredients] = useState(recipeData.tagged_ingredients);
   const [directions, setDirections] = useState(recipeData.instructions);
 
   // handlers
-  const handleTitleChange = (e) => {
+  const handleTitleChange = (e: { target: { value: any } }) => {
     setTitle(e.target.value);
     onRecipeChange({ ...recipeData, title: e.target.value });
   };
 
-  const handleIngredientsChange = (updatedIngredients) => {
-    setIngredients(updatedIngredients);
-    onRecipeChange({ ...recipeData, tagged_ingredients: updatedIngredients });
-  };
+  const handleIngredientsChange = useCallback(
+    (
+      updatedIngredients: {
+        quantity: number;
+        range_end: number;
+        unit: string;
+        name: string;
+        comment: string;
+      }[]
+    ) => {
+      setIngredients(updatedIngredients);
+      onRecipeChange({ ...recipeData, tagged_ingredients: updatedIngredients });
+    },
+    [recipeData, onRecipeChange]
+  );
 
   const handleAddIngredient = () => {
     const newIngredient = {
@@ -31,7 +59,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }) => {
   };
 
   const handleDeleteIngredient = useCallback(
-    (index) => {
+    (index: number) => {
       const newIngredients = [...ingredients].filter((_, i) => i !== index);
       handleIngredientsChange(newIngredients);
     },
@@ -49,7 +77,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }) => {
   };
 
   const handleDeleteDirection = useCallback(
-    (index) => {
+    (index: number) => {
       const newDirections = [...directions].filter((_, i) => i !== index);
       handleDirectionsChange(newDirections);
     },
@@ -72,7 +100,13 @@ const RecipeEditor = ({ recipeData, onRecipeChange }) => {
             key={index}
             index={index}
             ingredient={ingredient}
-            onIngredientChange={(updatedIngredient) => {
+            onIngredientChange={(updatedIngredient: {
+              quantity: number;
+              range_end: number;
+              unit: string;
+              name: string;
+              comment: string;
+            }) => {
               const newIngredients = [...ingredients];
               newIngredients[index] = updatedIngredient;
               handleIngredientsChange(newIngredients);
@@ -96,7 +130,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }) => {
             key={index}
             index={index}
             direction={direction}
-            onDirectionChange={(updatedDirection) => {
+            onDirectionChange={(updatedDirection: string) => {
               const newDirections = [...directions];
               newDirections[index] = updatedDirection;
               handleDirectionsChange(newDirections);

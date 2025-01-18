@@ -20,14 +20,14 @@ const RecipeViewer = ({ params }: { params: { recipe_id: string } }) => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await api.get(`/getRecipe/${recipe_id}`);
-        setRecipeData({ ...response.data });
+        const response = await api?.get(`/getRecipe/${recipe_id}`);
+        setRecipeData({ ...response?.data });
         setTempRecipeData({
-          ...response.data,
-          tagged_ingredients: response.data.ingredients,
+          ...response?.data,
+          tagged_ingredients: response?.data.ingredients,
         });
-        setLink(response.data.link);
-        setVideoUrl(response.data.video_url);
+        setLink(response?.data.link);
+        setVideoUrl(response?.data.video_url);
       } catch (error) {
         setError(true);
         console.error("Error fetching recipe:", error);
@@ -37,7 +37,7 @@ const RecipeViewer = ({ params }: { params: { recipe_id: string } }) => {
     fetchRecipe();
   }, [recipe_id, api]);
 
-  const handleRecipeChange = (updatedRecipe) => {
+  const handleRecipeChange = (updatedRecipe: any) => {
     setTempRecipeData(updatedRecipe);
   };
 
@@ -52,8 +52,8 @@ const RecipeViewer = ({ params }: { params: { recipe_id: string } }) => {
   console.log(recipeData);
   const tab_names = ["Overview", "Original"];
   const components = [
-    <RecipeCard recipe={recipeData} />,
-    <Embed link={videoUrl} />,
+    <RecipeCard key={0} recipe={recipeData} />,
+    <Embed key={1} link={videoUrl} />,
   ];
   return (
     <div className="w-screen h-full pt-8 pb-4 xl:p-0 xl:h-[calc(100vh-4rem)] flex justify-center items-center">

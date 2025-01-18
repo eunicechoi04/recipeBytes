@@ -11,8 +11,8 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await api.get(`/getUser/${username}`);
-        setUser(response.data);
+        const response = await api?.get(`/getUser/${username}`);
+        setUser(response?.data);
       } catch (error) {
         console.error("Error fetching user:", error);
       }
