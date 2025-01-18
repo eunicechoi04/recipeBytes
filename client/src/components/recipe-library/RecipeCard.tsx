@@ -1,6 +1,9 @@
-const RecipeCard = ({ recipe }) => {
+import { Recipe } from "@/types";
+
+const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   const days_ago = Math.floor(
-    (new Date() - new Date(recipe.created_at)) / (1000 * 60 * 60 * 24)
+    (new Date().getTime() - new Date(recipe.created_at).getTime()) /
+      (1000 * 60 * 60 * 24)
   );
 
   return (
@@ -16,7 +19,7 @@ const RecipeCard = ({ recipe }) => {
       </div>
       <div className="flex gap-4">
         <p>Tags:</p>
-        {recipe.tags.map((tag) => (
+        {recipe.tags.map((tag: string) => (
           <span
             key={tag}
             className="border border-blue-500 px-3 py-1 rounded-xl"

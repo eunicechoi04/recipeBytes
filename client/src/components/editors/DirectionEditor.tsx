@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
+import { DirectionEditorProps } from "@/types";
 
-const DirectionEditor = ({ index, direction, onDirectionChange, onDelete }) => {
+const DirectionEditor = ({
+  index,
+  direction,
+  onDirectionChange,
+  onDelete,
+}: DirectionEditorProps) => {
   const [text, setText] = useState(direction || "");
   const [trashColor, setTrashColor] = useState("#000000");
 
@@ -9,7 +15,7 @@ const DirectionEditor = ({ index, direction, onDirectionChange, onDelete }) => {
     setText(direction || "");
   }, [direction]);
 
-  const handleTextChange = (e) => {
+  const handleTextChange = (e: { target: { value: any } }) => {
     const newText = e.target.value;
     setText(newText);
     onDirectionChange(newText);

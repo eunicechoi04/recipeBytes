@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 
-const NotFound = ({ object }) => {
+const NotFound = ({ object }: { object: any }) => {
   const router = useRouter();
 
   const handleBackClick = () => {

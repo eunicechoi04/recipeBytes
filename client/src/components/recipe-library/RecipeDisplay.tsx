@@ -1,11 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
 import RecipeCard from "./RecipeCard";
+import { Recipe } from "@/types";
 import { Plus } from "lucide-react";
-const RecipeDisplay = ({ recipes }) => {
+const RecipeDisplay = ({ recipes }: { recipes: Recipe[] }) => {
   const router = useRouter();
 
-  const handleRecipeClick = (id) => {
+  const handleRecipeClick = (id: string) => {
     router.push(`/recipe/${id}`);
   };
 

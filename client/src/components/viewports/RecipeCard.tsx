@@ -1,4 +1,5 @@
-const RecipeCard = ({ recipe }) => {
+import { Recipe } from "@/types";
+const RecipeCard = ({ recipe }: { recipe: Recipe }) => {
   return (
     // <div className="flex flex-col bg-white items-center gap-2 text-sm rounded-lg px-4 py-12 h-full shadow-md">
     <div className="flex flex-col h-full">

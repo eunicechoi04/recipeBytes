@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
+import { IngredientEditorProps } from "@/types";
 
 const IngredientEditor = ({
   index,
   ingredient,
   onIngredientChange,
   onDelete,
-}) => {
+}: IngredientEditorProps) => {
   const [quantity, setQuantity] = useState(ingredient.quantity || "");
   const [rangeEnd, setRangeEnd] = useState(ingredient.range_end || "");
   const [unit, setUnit] = useState(ingredient.unit || "");
@@ -24,14 +25,14 @@ const IngredientEditor = ({
     setComment(ingredient.comment || "");
   }, [ingredient]);
 
-  const isValidNumberOrFraction = (value) => {
+  const isValidNumberOrFraction = (value: string) => {
     const fractionRegex = /^\d+\/\d*$/;
     const numberRegex = /^\d*\.?\d+$/;
 
     return fractionRegex.test(value) || numberRegex.test(value) || value === "";
   };
 
-  const handleQuantityChange = (e) => {
+  const handleQuantityChange = (e: { target: { value: any } }) => {
     const newQuantity = e.target.value;
     if (!isValidNumberOrFraction(newQuantity)) {
       setIsQuantityValid(false);
@@ -42,7 +43,7 @@ const IngredientEditor = ({
     }
   };
 
-  const handleRangeEndChange = (e) => {
+  const handleRangeEndChange = (e: { target: { value: any } }) => {
     const newRangeEnd = e.target.value;
     if (!isValidNumberOrFraction(newRangeEnd)) {
       setIsRangeEndValid(false);
@@ -53,19 +54,19 @@ const IngredientEditor = ({
     }
   };
 
-  const handleUnitChange = (e) => {
+  const handleUnitChange = (e: { target: { value: any } }) => {
     const newUnit = e.target.value;
     setUnit(newUnit);
     onIngredientChange({ ...ingredient, unit: newUnit });
   };
 
-  const handleNameChange = (e) => {
+  const handleNameChange = (e: { target: { value: any } }) => {
     const newName = e.target.value;
     setName(newName);
     onIngredientChange({ ...ingredient, name: newName });
   };
 
-  const handleCommentChange = (e) => {
+  const handleCommentChange = (e: { target: { value: any } }) => {
     const newComment = e.target.value;
     console.log("edited comment");
     setComment(newComment);

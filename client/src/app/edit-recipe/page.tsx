@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { useApi } from "@/context/ApiContext";
+import { RecipeData } from "@/types";
 import RecipeEditor from "@/components/editors/RecipeEditor";
 
 const EditRecipePage = () => {
   const { userId, isSignedIn } = useAuth();
-  const [recipeData, setRecipeData] = useState(null);
+  const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
   const router = useRouter();
   const api = useApi();
 
@@ -36,11 +37,12 @@ const EditRecipePage = () => {
       return;
     } else {
       const isTitleValid = recipeData?.title?.trim() !== "";
-      const areIngredientsValid = recipeData?.tagged_ingredients?.length > 0;
+      const areIngredientsValid =
+        (recipeData?.tagged_ingredients ?? []).length > 0;
       const areIngredientFormatValid = recipeData?.tagged_ingredients?.every(
         (ingredient) => ingredient.quantity && ingredient.name
       );
-      const areDirectionsValid = recipeData?.instructions?.length > 0;
+      const areDirectionsValid = (recipeData?.instructions ?? []).length > 0;
       if (
         isTitleValid &&
         areIngredientsValid &&
@@ -60,7 +62,7 @@ const EditRecipePage = () => {
           console.log("--------------------");
           console.log("response", response);
           console.log("--------------------");
-          const recipeId = recipeData.recipe_id;
+          const recipeId = recipeData?.recipe_id;
           if (response?.status === 201) {
             console.log("Recipe saved successfully!");
             sessionStorage.removeItem("recipeData");
@@ -71,7 +73,8 @@ const EditRecipePage = () => {
           alert("Failed to save recipe.");
         }
       } else {
-        alert_message = "Please ensure all fields are filled out correctly.";
+        let alert_message =
+          "Please ensure all fields are filled out correctly.";
         if (!isTitleValid) {
           alert_message += "\n- Title is required";
         }
@@ -90,7 +93,7 @@ const EditRecipePage = () => {
     }
   };
 
-  const handleRecipeChange = (updatedRecipe) => {
+  const handleRecipeChange = (updatedRecipe: RecipeData) => {
     setRecipeData(updatedRecipe);
     sessionStorage.setItem("recipeData", JSON.stringify(updatedRecipe));
     console.log(updatedRecipe);

@@ -1,24 +1,9 @@
 import { useState, useCallback } from "react";
 import { Plus } from "lucide-react";
+import { RecipeData } from "@/types";
 import IngredientEditor from "./IngredientEditor";
 import DirectionEditor from "./DirectionEditor";
-
-interface RecipeData {
-  title: string;
-  tagged_ingredients: Array<{
-    quantity: number;
-    range_end: number;
-    unit: string;
-    name: string;
-    comment: string;
-  }>;
-  instructions: string[];
-}
-
-interface RecipeEditorProps {
-  recipeData: RecipeData;
-  onRecipeChange: (updatedRecipe: RecipeData) => void;
-}
+import { Ingredient, RecipeEditorProps } from "@/types";
 
 const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
   const [title, setTitle] = useState(recipeData.title);
@@ -32,15 +17,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
   };
 
   const handleIngredientsChange = useCallback(
-    (
-      updatedIngredients: {
-        quantity: number;
-        range_end: number;
-        unit: string;
-        name: string;
-        comment: string;
-      }[]
-    ) => {
+    (updatedIngredients: Ingredient[]) => {
       setIngredients(updatedIngredients);
       onRecipeChange({ ...recipeData, tagged_ingredients: updatedIngredients });
     },
@@ -48,9 +25,9 @@ const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
   );
 
   const handleAddIngredient = () => {
-    const newIngredient = {
-      quantity: 0,
-      range_end: 0,
+    const newIngredient: Ingredient = {
+      quantity: "0",
+      range_end: "0",
       unit: "",
       name: "",
       comment: "",
@@ -66,7 +43,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
     [ingredients, handleIngredientsChange]
   );
 
-  const handleDirectionsChange = (updatedDirections) => {
+  const handleDirectionsChange = (updatedDirections: string[]) => {
     setDirections(updatedDirections);
     onRecipeChange({ ...recipeData, instructions: updatedDirections });
   };
@@ -100,13 +77,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
             key={index}
             index={index}
             ingredient={ingredient}
-            onIngredientChange={(updatedIngredient: {
-              quantity: number;
-              range_end: number;
-              unit: string;
-              name: string;
-              comment: string;
-            }) => {
+            onIngredientChange={(updatedIngredient: Ingredient) => {
               const newIngredients = [...ingredients];
               newIngredients[index] = updatedIngredient;
               handleIngredientsChange(newIngredients);

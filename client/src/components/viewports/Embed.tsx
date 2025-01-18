@@ -1,5 +1,5 @@
-const Embed = ({ link }) => {
-  const container = {
+const Embed = ({ link }: { link: string }) => {
+  const container: React.CSSProperties = {
     position: "relative",
     width: "100%",
     height: "0",
@@ -7,7 +7,7 @@ const Embed = ({ link }) => {
       "56.25%" /* The height of the item will now be 56.25% of the width. */,
   };
 
-  const iframeStyle = {
+  const iframeStyle: React.CSSProperties = {
     position: "absolute",
     width: "100%",
     height: "100%",
@@ -19,7 +19,6 @@ const Embed = ({ link }) => {
     <div className="aspect-ratio" style={container}>
       <iframe
         src={link}
-        frameBorder="0"
         width="550"
         height="275"
         style={iframeStyle}
