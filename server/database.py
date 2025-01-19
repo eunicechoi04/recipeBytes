@@ -3,6 +3,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from config import DATABASE_URL
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Create the engine to connect to MySQL
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True will log SQL queries to the console
 
