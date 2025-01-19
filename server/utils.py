@@ -15,6 +15,7 @@ load_dotenv()
 L = instaloader.Instaloader()
 client = OpenAI()
 nlp = spacy.load("en_core_web_sm")
+model = whisper.load_model("tiny")
 
 def clean_recipe(recipe_text):
     lines = recipe_text.split("\n")
@@ -317,7 +318,6 @@ def extract_transcript(post):
     video_clip.audio.write_audiofile(audio_path)
     
     # transcribe
-    model = whisper.load_model("tiny")
     shutil.rmtree(video_folder)
     return model.transcribe(audio_path)
 
