@@ -368,7 +368,7 @@ def prompt(text):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe."},
+            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe. Don't add or remove steps/ingreidents. if ingredients are contained inside the steps, leave steps as is and extract ingredients separately."},
             {
                 "role": "user",
                 "content": text
