@@ -8,6 +8,7 @@ import spacy
 from moviepy import VideoFileClip
 from openai import OpenAI
 from dotenv import load_dotenv
+import shutil
 
 load_dotenv()
 
@@ -316,12 +317,13 @@ def extract_transcript(post):
     video_clip.audio.write_audiofile(audio_path)
     
     # transcribe
-    model = whisper.load_model("base")
-
+    model = whisper.load_model("tiny")
+    shutil.rmtree(video_folder)
     return model.transcribe(audio_path)
 
+
 def get_instagram_post_data(url):
-    shortcode = url.split("/")[-2]
+    shortcode = url.split("/")[-2] if url.endswith("/") else url.split("/")[-1]
     post = instaloader.Post.from_shortcode(L.context, shortcode)
     metadata = {
         "caption": post.caption,
@@ -331,7 +333,6 @@ def get_instagram_post_data(url):
         metadata["video_url"] = post.video_url
         metadata['transcript'] = extract_transcript(post)
     return metadata
-
 
 def find_recipe_patterns(text):
     recipe_keywords = [
@@ -362,3 +363,47 @@ def recipe_body(captions, transcript):
     if transcript and find_recipe_patterns(transcript):
         return transcript
     return ""
+
+def prompt(text):
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe."},
+            {
+                "role": "user",
+                "content": text
+            }
+        ],
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "recipe",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "ingredients": {
+                            "type": "array",
+                            "description": "A list of ingredients needed for the recipe.",
+                            "items": {
+                                "type": "string",
+                                "description": "Each instruction step."
+                            }
+                        },
+                        "instructions": {
+                            "type": "array",
+                            "description": "A list of step-by-step instructions for preparing the recipe.",
+                            "items": {
+                                "type": "string",
+                                "description": "Each instruction step."
+                            }
+                        }
+                    },
+                    "required": ["ingredients","instructions"],
+                    "additionalProperties": False
+                },
+                "strict": True
+            },
+        }
+    )
+
+    return json.loads(completion.choices[0].message.content)
