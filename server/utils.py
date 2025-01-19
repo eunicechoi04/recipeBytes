@@ -362,3 +362,47 @@ def recipe_body(captions, transcript):
     if transcript and find_recipe_patterns(transcript):
         return transcript
     return ""
+
+def prompt(text):
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe. Don't add or remove steps/ingreidents. if ingredients are contained inside the steps, leave steps as is and extract ingredients separately."},
+            {
+                "role": "user",
+                "content": text
+            }
+        ],
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "recipe",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "ingredients": {
+                            "type": "array",
+                            "description": "A list of ingredients needed for the recipe.",
+                            "items": {
+                                "type": "string",
+                                "description": "Each instruction step."
+                            }
+                        },
+                        "instructions": {
+                            "type": "array",
+                            "description": "A list of step-by-step instructions for preparing the recipe.",
+                            "items": {
+                                "type": "string",
+                                "description": "Each instruction step."
+                            }
+                        }
+                    },
+                    "required": ["ingredients","instructions"],
+                    "additionalProperties": False
+                },
+                "strict": True
+            },
+        }
+    )
+
+    return json.loads(completion.choices[0].message.content)
