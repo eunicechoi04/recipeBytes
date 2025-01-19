@@ -1,48 +1,26 @@
 import os
 import re
-import boto3
 import decimal
 import instaloader
 import requests
 import whisper
-import json
+import spacy
 from moviepy import VideoFileClip
-from nltk.tokenize import sent_tokenize
 from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
 
-s3 = boto3.client("s3")
 L = instaloader.Instaloader()
-nutrition_url = "https://platform.fatsecret.com/rest/natural-language-processing/v1"
-
 client = OpenAI()
-def download_folder_from_s3(s3_folder, local_dir):
-    s3_folder_path = "models/" + s3_folder + "/"
-    response = s3.list_objects_v2(Bucket="recipebytes-models", Prefix=s3_folder_path)
-    for obj in response.get("Contents", []):
-        filename = obj["Key"]
-        local_path = os.path.join(local_dir, filename[len(s3_folder_path) :])
-        os.makedirs(os.path.dirname(local_path), exist_ok=True)
-
-        # Download the file
-        s3.download_file("recipebytes-models", filename, local_path)
-        print(f"Downloaded {filename} to {local_path}")
-
-
-def download_file_from_s3(s3_file, local_path):
-    s3_filepath = "models/" + s3_file
-    s3.download_file("recipebytes-models", s3_filepath, local_path)
-    print(f"Downloaded {s3_filepath} to {local_path}")
-
+nlp = spacy.load("en_core_web_sm")
 
 def clean_recipe(recipe_text):
     lines = recipe_text.split("\n")
     recipe_tokens = []
     for line in lines:
         if line:
-            tokens = sent_tokenize(line)  # Tokenize the recipe into sentences
+            tokens = [sent.text for sent in nlp(line).sents]  # Tokenize the recipe into sentences
             recipe_tokens.extend(tokens)  # Add the sentences to the list
 
     cleaned_tokens = [clean_text(token) for token in recipe_tokens]
@@ -384,57 +362,3 @@ def recipe_body(captions, transcript):
     if transcript and find_recipe_patterns(transcript):
         return transcript
     return ""
-
-def prompt(text):
-    completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe."},
-            {
-                "role": "user",
-                "content": text
-            }
-        ],
-        response_format={
-            "type": "json_schema",
-            "json_schema": {
-                "name": "recipe",
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "ingredients": {
-                            "type": "array",
-                            "description": "A list of ingredients needed for the recipe.",
-                            "items": {
-                                "type": "string",
-                                "description": "Each instruction step."
-                            }
-                        },
-                        "instructions": {
-                            "type": "array",
-                            "description": "A list of step-by-step instructions for preparing the recipe.",
-                            "items": {
-                                "type": "string",
-                                "description": "Each instruction step."
-                            }
-                        }
-                    },
-                    "required": ["ingredients","instructions"],
-                    "additionalProperties": False
-                },
-                "strict": True
-            },
-        }
-    )
-
-    return json.loads(completion.choices[0].message.content)
-
-def unclumpFractions(s):
-    """
-    Replaces the dollar sign between the integer and fractional part of a quantity
-    with a whitespace, reversing the clumpFractions transformation.
-
-        unclumpFractions("aaa 1$2/3 bbb")
-        # => "aaa 1 2/3 bbb"
-    """
-    return re.sub(r"(\d+)\$(\d)/(\d)", r"\1 \2/\3", s)
