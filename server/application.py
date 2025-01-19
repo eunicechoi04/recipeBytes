@@ -12,7 +12,7 @@ from services.recipe.getUserRecipes import get_user_recipes_service
 from services.recipe.getRecipe import get_recipe_service
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://main.d1f5t7j1bbqld7.amplifyapp.com/"])
 
 @app.route("/", methods=["GET"])
 def home():
