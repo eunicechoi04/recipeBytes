@@ -25,7 +25,7 @@ const ImportPage = () => {
     setLoading(true);
     try {
       const res = await api?.post("/processlink", { link: link });
-      if (res.data.error) {
+      if (res?.data.error) {
         alert("Please enter a valid instagram link");
       } else if (res && res?.data) {
         setResponse(res.data);
