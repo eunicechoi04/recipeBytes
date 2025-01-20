@@ -8,7 +8,7 @@ const ApiContext = createContext<AxiosInstance | null>(null);
 
 export const ApiProvider = ({ children }: { children: React.ReactNode }) => {
   const api = axios.create({
-    baseURL: "http://18.116.43.163/api", // Your Flask server URL
+    baseURL: "https://d3jy7u4rzvsocd.cloudfront.net", // Your Flask server URL
   });
 
   return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
