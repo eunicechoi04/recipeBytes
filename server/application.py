@@ -1,7 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import traceback
-from models.recipe import Recipe
 from database import get_db
 import model_utils
 import utils
@@ -33,12 +31,9 @@ def process_link():
         caption = metadata.get("caption")
         transcript = metadata.get("transcript", "")
         recipe = utils.recipe_body(caption, transcript)
-        output = utils.prompt(recipe)
         cleaned_tokens = utils.clean_recipe(recipe)
         instructions = model_utils.extract_instructions_from_recipe(cleaned_tokens)
         ingredients = model_utils.extract_ingredient_phrases_from_recipe(cleaned_tokens)
-        instructions = output.get("instructions")
-        ingredients = output.get("ingredients")
         tagged_ingredients = model_utils.tag_ingredient_phrases_from_recipe(ingredients)
 
         recipe_id = str(uuid4())
@@ -50,7 +45,6 @@ def process_link():
                 "embed_link": metadata.get("video_url") or "",
                 "caption": caption,
                 "transcript": transcript,
-                "output": output,
                 "recipe": recipe,
                 "instructions": instructions,
                 "ingredients": ingredients,
