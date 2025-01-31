@@ -62,7 +62,7 @@ const RecipeEditor = ({ recipeData, onRecipeChange }: RecipeEditorProps) => {
   );
 
   return (
-    <div className="flex flex-col bg-white items-center gap-2 text-sm rounded-lg px-6 py-6 shadow-md h-full">
+    <div className="flex flex-col bg-white items-center gap-2 w-full text-sm rounded-lg px-6 py-6 shadow-md h-full">
       <label className="font-bold text-left w-full text-lg">Title</label>
       <input
         placeholder="Enter recipe title"

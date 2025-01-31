@@ -123,7 +123,7 @@ const EditRecipePage = () => {
         </button>
       </div>
       {/* <div className="flex w-full min-h-[95%] gap-8 px-8"> */}
-      <div className="flex justify-center items-center min-h-[95%] w-full max-h-screen">
+      <div className="flex justify-center items-center min-h-[95%] px-8 w-full max-h-screen">
         <RecipeEditor
           recipeData={recipeData}
           onRecipeChange={handleRecipeChange}
