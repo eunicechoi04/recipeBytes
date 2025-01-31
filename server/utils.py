@@ -5,6 +5,7 @@ import instaloader
 import requests
 import whisper
 import spacy
+import json
 from moviepy import VideoFileClip
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ load_dotenv()
 L = instaloader.Instaloader()
 client = OpenAI()
 nlp = spacy.load("en_core_web_sm")
+model = whisper.load_model("tiny")
 
 def clean_recipe(recipe_text):
     lines = recipe_text.split("\n")
@@ -317,9 +319,9 @@ def extract_transcript(post):
     video_clip.audio.write_audiofile(audio_path)
     
     # transcribe
-    model = whisper.load_model("tiny")
+    transcription = model.transcribe(audio_path)
     shutil.rmtree(video_folder)
-    return model.transcribe(audio_path)
+    return transcription
 
 
 def get_instagram_post_data(url):
@@ -368,7 +370,7 @@ def prompt(text):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe."},
+            {"role": "system", "content": "You are a helpful assistant that can extract a list of ingredients and instructions from a recipe. Don't add or remove steps/ingreidents. if ingredients are contained inside the steps, leave steps as is and extract ingredients separately."},
             {
                 "role": "user",
                 "content": text

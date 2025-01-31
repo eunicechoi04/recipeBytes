@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from database import get_db
 import model_utils
@@ -12,8 +12,8 @@ from services.recipe.getUserRecipes import get_user_recipes_service
 from services.recipe.getRecipe import get_recipe_service
 
 app = Flask(__name__)
-CORS(app)
-
+# CORS(app, origins=["http://18.116.43.163", "http://ec2-18-116-43-163.us-east-2.compute.amazonaws.com"])
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Hello, World!"})
@@ -23,10 +23,12 @@ def home():
 def process_link():
     data = request.get_json()
     url = data.get("link")
-
+    response = jsonify(data)
     if "instagram.com" in url:
         if not utils.check_valid_instagram_link(url):
-            return jsonify({"error": "Invalid Instagram link"}), 400
+            response = jsonify({"error": "Invalid Instagram link"})
+            response.headers["Access-Control-Allow-Origin"] = "*"
+            return response
         metadata = utils.get_instagram_post_data(url)
         caption = metadata.get("caption")
         transcript = metadata.get("transcript", "")
@@ -40,7 +42,7 @@ def process_link():
         tagged_ingredients = model_utils.tag_ingredient_phrases_from_recipe(ingredients)
 
         recipe_id = str(uuid4())
-        return jsonify(
+        response = make_response(jsonify(
             {
                 "recipe_id": recipe_id,
                 "url": url,
@@ -54,42 +56,58 @@ def process_link():
                 "ingredients": ingredients,
                 "tagged_ingredients": tagged_ingredients,
             }
-        )
-    return jsonify(data)
+        ))
+        response.headers["Access-Control-Allow-Origin"] = "*"
+    else:
+        response = jsonify({"error": "Invalid instagram link"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @app.route('/api/createUser', methods=['POST'])
 def create_user():
     db = next(get_db())
     data = request.get_json().get('user')
-    return create_user_service(db, data)
+    response = create_user_service(db, data)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @app.route('/api/updateUser', methods=['POST'])
 def update_user():
     db = next(get_db())
     data = request.get_json().get('user')
-    return update_user_service(db, data)
+    response = update_user_service(db, data)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @app.route('/api/getUser/<username>', methods=['GET'])
 def get_user(username):
     db = next(get_db())
-    return get_user_service(db, username)
+    response = get_user_service(db, username)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route('/api/saveRecipe', methods=['POST'])
 def save_recipe():
     db = next(get_db())
     data = request.get_json()
-    return save_recipe_service(db, data)
+    response = save_recipe_service(db, data)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @app.route('/api/getRecipes/<user_id>', methods=['GET'])
 def get_recipes(user_id):
     db = next(get_db())
-    return get_user_recipes_service(db, user_id)
+    response = get_user_recipes_service(db, user_id)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 @app.route('/api/getRecipe/<recipe_id>', methods=['GET'])
 def get_recipe(recipe_id):
     db = next(get_db())
-    return get_recipe_service(db, recipe_id)
+    response = get_recipe_service(db, recipe_id)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
