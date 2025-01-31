@@ -321,7 +321,7 @@ def extract_transcript(post):
     # transcribe
     transcription = model.transcribe(audio_path)
     shutil.rmtree(video_folder)
-    return transcription
+    return transcription.get('text', "")
 
 
 def get_instagram_post_data(url):

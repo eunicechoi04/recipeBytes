@@ -38,8 +38,8 @@ def tag_ingredient_phrases_from_recipe(ingredient_phrases):
                 ingredient_components["name"].append(token)
             elif label == "B-COMMENT":
                 ingredient_components["comment"].append(token)
-        
-        if not ingredient_components["quantity"] or not ingredient_components["name"]:
+
+        if not ingredient_components["name"]:
             continue
 
         # Combine the components into a single string

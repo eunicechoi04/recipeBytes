@@ -67,47 +67,47 @@ def process_link():
 def create_user():
     db = next(get_db())
     data = request.get_json().get('user')
-    response = create_user_service(db, data)
+    response, code = create_user_service(db, data)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, code
 
 @app.route('/api/updateUser', methods=['POST'])
 def update_user():
     db = next(get_db())
     data = request.get_json().get('user')
-    response = update_user_service(db, data)
+    response, code = update_user_service(db, data)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, code
 
 @app.route('/api/getUser/<username>', methods=['GET'])
 def get_user(username):
     db = next(get_db())
-    response = get_user_service(db, username)
+    response, code = get_user_service(db, username)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, code
 
 
 @app.route('/api/saveRecipe', methods=['POST'])
 def save_recipe():
     db = next(get_db())
     data = request.get_json()
-    response = save_recipe_service(db, data)
+    response, code = save_recipe_service(db, data)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, code
 
 @app.route('/api/getRecipes/<user_id>', methods=['GET'])
 def get_recipes(user_id):
     db = next(get_db())
-    response = get_user_recipes_service(db, user_id)
+    response, code = get_user_recipes_service(db, user_id)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, code
 
 @app.route('/api/getRecipe/<recipe_id>', methods=['GET'])
 def get_recipe(recipe_id):
     db = next(get_db())
-    response = get_recipe_service(db, recipe_id)
+    response, code = get_recipe_service(db, recipe_id)
     response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+    return response, code
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
